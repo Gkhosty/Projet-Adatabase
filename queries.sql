@@ -19,6 +19,8 @@ WHERE is_ada = TRUE;
 
 
  -- 5️ Récupérer les ressources qui ont la compétence JavaScript associée
+ --Voici un exemple de jointure pour récupérer toutes
+ -- les ressources qui utilisent la compétence JavaScript
 
 SELECT resources.*
 FROM resources
@@ -41,6 +43,41 @@ LEFT JOIN resources
     ON resources.theme_id = themes.id
 GROUP BY themes.id, themes.name
 ORDER BY COUNT(resources.id) DESC;
+
+
+--Récupérer le nom et l'url de toutes les ressources avec un tableau contenant toutes leurs compétences
+
+SELECT resources.id, resources.title, resources.url, ARRAY_AGG(skills.name) AS liste_des_competences
+FROM resources
+LEFT JOIN resources_skills
+    ON resources_skills.resource_id = resources.id
+LEFT JOIN skills
+    ON skills.id = resources_skills.skill_id
+GROUP BY resources.id, resources.title, resources.url
+ORDER BY resources.title;
+
+--Récupérer les 5 ressources les plus récentes avec leur thème
+
+SELECT resources.id, resources.title, resources.description, themes.name AS theme
+FROM resources
+JOIN themes
+    ON themes.id = resources.theme_id
+ORDER BY resources.id DESC
+LIMIT 5;
+
+
+--Récupérer toutes les compétences qui ne sont associées à aucune ressource
+
+SELECT skills.id, skills.name
+FROM skills
+LEFT JOIN resources_skills
+    ON resources_skills.skill_id = skills.id
+WHERE resources_skills.skill_id IS NULL;
+
+
+
+SELECT * FROM resources;
+
 
 
 
